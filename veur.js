@@ -54,6 +54,7 @@
 			"handlebar": "handlebars",
 			"harden": "harden",
 			"kein": "kein",
+			"kept": "kept",
 			"lilfy": "lilfy",
 			"lire": "lire",
 			"offcache": "offcache",
@@ -61,8 +62,10 @@
 			"path": "path",
 			"parseon": "parseon",
 			"protype": "protype",
+			"RateLimit": "express-rate-limit",
 			"stuffed": "stuffed",
-			"truly": "truly"
+			"truly": "truly",
+			"truu": "truu"
 		}
 	@end-include
 */
@@ -76,17 +79,20 @@ const falzy = require( "falzy" );
 const handlebar = require( "handlebars" );
 const harden = require( "harden" );
 const kein = require( "kein" );
+const kept = require( "kept" );
 const lilfy = require( "lilfy" );
 const lire = require( "lire" );
 const offcache = require( "offcache" );
 const path = require( "path" );
 const parseon = require( "parseon" );
 const protype = require( "protype" );
+const RateLimit = require( "express-rate-limit" );
 const stuffed = require( "stuffed" );
 const truly = require( "truly" );
+const truu = require( "truu" );
 
-harden( "DEFAULT_CLIENT_PATH", "/client" );
-harden( "DEFAULT_VIEW_PATH", "/view" );
+harden( "DEFAULT_CLIENT_PATH", "client" );
+harden( "DEFAULT_VIEW_PATH", "view" );
 harden( "DEFAULT_INDEX", "index.html" );
 harden( "DEFAULT_REDIRECT_PATH", "/view/status/page" );
 
@@ -100,7 +106,8 @@ harden( "DEFAULT_REDIRECT_PATH", "/view/status/page" );
 			"view": "string",
 			"index": "string",
 			"redirect": "string",
-			"data": "object"
+			"data": "object",
+			"limit": "object"
 		}
 	@end-option
 */
@@ -155,18 +162,25 @@ const veur = function veur( option ){
 	}
 
 	let view = option.view || "";
-	if( truly( view ) ){
-		viewPath = [ `${ viewPath }/${ view }`, `${ viewPath }/${ view }/*` ];
 
-	}else{
-		viewPath = [ viewPath, `${ viewPath }/*` ];
+	let handlerPath = [ `/${ viewPath }`, `/${ viewPath }/*` ];
+	if( truly( view ) ){
+		handlerPath = [ `/${ viewPath }/${ view }`, `/${ viewPath }/${ view }/*` ];
 	}
 
-	let indexPath = path.resolve( rootPath, clientPath, view, index );
+	handlerPath = handlerPath.map( ( path ) => { return path.replace( /\/+/g, "/" ); } );
+
+	let filePath = path.resolve( clientPath, view, index );
+
+	if( !kept( filePath, true ) ){
+		Fatal( "index does not exist", filePath );
+
+		return middleware;
+	}
 
 	let indexCache = { };
 
-	let serverIndex = function serveIndex( index, request, response ){
+	let serveIndex = function serveIndex( index, request, response ){
 		if( stuffed( request.query ) && kein( request.query, "data" ) ){
 			try{
 				let data = parseon( lilfy.revert( request.query.data ) );
@@ -201,20 +215,31 @@ const veur = function veur( option ){
 			.send( index );
 	};
 
-	middleware.use( viewPath, function view( request, response, next ){
+	let limit = truu( option.limit )? option.limit : { "max": 3 };
+
+	limit.handler = function limit( request, response, next ){
+		Redundant( `multiple request to ${ handlerPath }` )
+			.silence( )
+			.prompt( )
+			.send( response );
+	};
+
+	let rateLimit = new RateLimit( limit );
+
+	middleware.use( handlerPath, rateLimit, function view( request, response, next ){
 		if( ( /\.[a-z0-9]{1,4}$/ ).test( request.path ) ){
 			next( );
 
 			return;
 		}
 
-		if( kein( indexCache, indexPath ) ){
-			serverIndex( indexCache[ indexPath ], request, response );
+		if( kein( indexCache, filePath ) ){
+			serveIndex( indexCache[ filePath ], request, response );
 
 			return;
 		}
 
-		lire( indexPath )
+		lire( filePath )
 			( function done( error, index ){
 				if( clazof( error, Error ) ){
 					Issue( "reading view", error )
@@ -225,16 +250,20 @@ const veur = function veur( option ){
 				}else if( truly( index ) ){
 					serveIndex( index, request, response );
 
-					indexCache[ indexPath ] = index;
+					indexCache[ filePath ] = index;
 
 				}else{
-					Warning( "empty view", viewPath )
+					Warning( "empty view", handlerPath )
+						.silence( )
 						.prompt( )
 						.redirect( redirect )
 						.send( response );
 				}
 			} );
 	} );
+
+	Prompt( `view service for ${ handlerPath } is now active` )
+		.remind( `serving ${ filePath }` );
 
 	return middleware;
 };

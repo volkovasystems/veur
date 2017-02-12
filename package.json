@@ -22,20 +22,23 @@
   },
   "homepage": "https://github.com/volkovasystems/veur#readme",
   "dependencies": {
-    "clazof": "^0.5.0",
+    "clazof": "^0.10.0",
     "express": "^4.14.1",
-    "falze": "^0.6.0",
+    "express-rate-limit": "^2.6.0",
+    "falze": "^0.8.0",
     "falzy": "^0.11.0",
     "handlebars": "^4.0.6",
     "harden": "^0.14.0",
     "kein": "^0.9.0",
+    "kept": "^0.10.0",
     "lilfy": "^0.7.0",
     "lire": "^0.4.0",
     "offcache": "^0.4.0",
-    "olivant": "^0.14.0",
+    "olivant": "^0.18.0",
     "parseon": "^0.3.0",
     "protype": "^0.15.0",
     "stuffed": "^0.9.0",
-    "truly": "^0.11.0"
+    "truly": "^0.11.0",
+    "truu": "^0.9.0"
   }
 }
