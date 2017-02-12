@@ -161,6 +161,14 @@ const veur = function veur( option ){
 		throw new Error( "invalid data" );
 	}
 
+	let filePath = path.resolve( clientPath, view, index );
+
+	if( !kept( filePath, true ) ){
+		Fatal( "view index does not exist", filePath );
+
+		return middleware;
+	}
+
 	let view = option.view || "";
 
 	let handlerPath = [ `/${ viewPath }`, `/${ viewPath }/*` ];
@@ -169,16 +177,6 @@ const veur = function veur( option ){
 	}
 
 	handlerPath = handlerPath.map( ( path ) => { return path.replace( /\/+/g, "/" ); } );
-
-	let filePath = path.resolve( clientPath, view, index );
-
-	if( !kept( filePath, true ) ){
-		Fatal( "index does not exist", filePath );
-
-		return middleware;
-	}
-
-	let indexCache = { };
 
 	let serveIndex = function serveIndex( index, request, response ){
 		if( stuffed( request.query ) && kein( request.query, "data" ) ){
@@ -225,6 +223,8 @@ const veur = function veur( option ){
 	};
 
 	let rateLimit = new RateLimit( limit );
+
+	let indexCache = { };
 
 	middleware.use( handlerPath, rateLimit, function view( request, response, next ){
 		if( ( /\.[a-z0-9]{1,4}$/ ).test( request.path ) ){
