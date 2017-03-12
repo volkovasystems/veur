@@ -161,6 +161,7 @@ const veur = function veur( option ){
 		throw new Error( "invalid data" );
 	}
 
+	let view = option.view || "";
 	let filePath = path.resolve( clientPath, view, index );
 
 	if( !kept( filePath, true ) ){
@@ -169,7 +170,6 @@ const veur = function veur( option ){
 		return middleware;
 	}
 
-	let view = option.view || "";
 
 	let handlerPath = [ `/${ viewPath }`, `/${ viewPath }/*` ];
 	if( truly( view ) ){
@@ -179,7 +179,7 @@ const veur = function veur( option ){
 	handlerPath = handlerPath.map( ( path ) => { return path.replace( /\/+/g, "/" ); } );
 
 	let serveIndex = function serveIndex( index, request, response ){
-		if( stuffed( request.query ) && kein( request.query, "data" ) ){
+		if( stuffed( request.query ) && kein( "data", request.query ) ){
 			try{
 				let data = parseon( lilfy.revert( request.query.data ) );
 
@@ -233,7 +233,7 @@ const veur = function veur( option ){
 			return;
 		}
 
-		if( kein( indexCache, filePath ) ){
+		if( kein( filePath, indexCache ) ){
 			serveIndex( indexCache[ filePath ], request, response );
 
 			return;
