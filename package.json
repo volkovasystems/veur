@@ -1,6 +1,6 @@
 {
   "name": "veur",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "View service.",
   "main": "veur.js",
   "scripts": {
@@ -25,23 +25,23 @@
   },
   "homepage": "https://github.com/volkovasystems/veur#readme",
   "dependencies": {
-    "clazof": "^0.18.0",
+    "clazof": "^0.19.0",
     "express": "^4.15.2",
     "express-rate-limit": "^2.6.0",
-    "falze": "^0.19.0",
+    "falze": "^0.20.0",
     "falzy": "^0.17.0",
     "handlebars": "^4.0.6",
     "harden": "^0.21.0",
     "kein": "^0.16.0",
-    "kept": "^0.14.0",
+    "kept": "^0.15.0",
     "lilfy": "^0.10.0",
-    "lire": "^0.7.0",
-    "offcache": "^0.7.0",
-    "olivant": "^0.21.0",
+    "lire": "^0.8.0",
+    "offcache": "^0.8.0",
+    "olivant": "^0.22.0",
     "parseon": "^0.6.0",
     "protype": "^0.21.0",
-    "stuffed": "^0.19.0",
+    "stuffed": "^0.20.0",
     "truly": "^0.17.0",
-    "truu": "^0.22.0"
+    "truu": "^0.23.0"
   }
 }
