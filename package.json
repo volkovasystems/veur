@@ -30,7 +30,7 @@
     "express-rate-limit": "^2.6.0",
     "falze": "^0.20.0",
     "falzy": "^0.17.0",
-    "handlebars": "^4.0.6",
+    "handlebars": "^4.0.12",
     "harden": "^0.21.0",
     "kein": "^0.16.0",
     "kept": "^0.17.0",
